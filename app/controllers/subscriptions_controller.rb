@@ -6,7 +6,7 @@ class SubscriptionsController < ApplicationController
     @subscriptions = Subscription.all.order(created_at: :desc)
     authorize @subscriptions
   end
-  
+
   def my_students
     @subscriptions = Subscription.joins(:course).where(courses: {user: current_user}).order(created_at: :desc)
     #authorize @subscriptions, :mine?

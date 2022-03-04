@@ -10,11 +10,13 @@ class Subscription < ApplicationRecord
 
   validates_presence_of :rating, if: :comment?
   validates_presence_of :comment, if: :rating?
+  # User can't be subscribed to the same course twice
+  validates_uniqueness_of :user_id, scope: :course_id
+  # User can't be subscribed to the same course twice
+  validates_uniqueness_of :course_id, scope: :user_id
 
-  validates_uniqueness_of :user_id, scope: :course_id  #user cant be subscribed to the same course twice
-  validates_uniqueness_of :course_id, scope: :user_id  #user cant be subscribed to the same course twice
-  
-  validate :cant_subscribe_to_own_course  #user can't create a subscription if course.user == current_user.id
+  # User can't create a subscription if course.user == current_user.id
+  validate :cant_subscribe_to_own_course
   protected
   def cant_subscribe_to_own_course
     if self.new_record?
@@ -31,6 +33,6 @@ class Subscription < ApplicationRecord
   after_save do
     unless rating.nil? || rating.zero?
       course.update_rating
-    end 
-  end 
+    end
+  end
 end
